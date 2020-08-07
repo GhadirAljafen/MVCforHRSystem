@@ -1,0 +1,86 @@
+﻿@model HR.Website.Models.VacationInsertAndEdit
+@{
+    Layout = null;
+    ViewBag.Title = "Vacation Request";
+}
+
+<!DOCTYPE html>
+<head>
+    <link href="~/Content/alertify.css" rel="stylesheet" />
+    <link href="~/Content/alertify/alertify.core.css" rel="stylesheet" />
+    <link href="~/Content/alertify/alertify.default.css" rel="stylesheet" />
+</head>
+<html>
+
+<body>
+    @*onsubmit = "return SubmitForm(this)",*@
+    @using (Html.BeginForm("AddVacation", "Vacation", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return SubmitForm(this)", id = "Form" }))
+    {
+        @ViewBag.Error
+        <h1>Request a Vacation</h1>
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <input id="Status" name="Status" type="hidden" value="Pending" />
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("Type",
+                       new SelectList(Enum.GetValues(typeof(HR.Website.Models.Enums.Types))),
+                        "Select Vacation Type",
+                       new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Attatchment, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <input class="form-control" type="file" name="file" />
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-ddThh:mm:ss}", new { @class = "form-control", type = "datetime-local" })
+                    @*@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-ddThh:mm:ss}", new { @class = "form-control", type = "datetime-local" })
+                    @*@Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <input id="btnSubmit" type="submit" value="Add" class="btn btn-info" />
+                <input id="btnDraft" type="submit" value="Draft" class="btn btn-warning" onclick="asDraft()" />
+            </div>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        <script type="text/javascript">
+            dataTable.onload = function () {
+                        alertify.error("@ViewBag.Message");
+                    }
+        </script>
+    }
+    <script src="~/Scripts/alertify/alertify.js"></script>
+    <script src="~/Scripts/alertify/alertify.min.js"></script>
+    <script type="text/javascript">
+        function asDraft() {
+            document.getElementById('Status').value = 'Draft';
+        }
+    </script>
+</body>
+</html>

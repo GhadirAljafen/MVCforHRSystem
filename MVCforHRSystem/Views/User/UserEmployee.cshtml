@@ -1,0 +1,111 @@
+﻿
+@{
+    ViewBag.Title = "UserEmployee";
+}
+<!DOCTYPE html>
+<head>
+    <link href="~/Content/FormStyle.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/alertify/alertify.core.css" rel="stylesheet" />
+    <link href="~/Content/alertify/alertify.default.css" rel="stylesheet" />
+</head>
+<html>
+
+<body>
+    <br />
+    <fieldset>
+        @{
+
+            if (Session["Username"] != null)
+            {
+                <h2> Welcom <i style="color: #18bc9c"> @Session["Username"].ToString() </i>To HR System </h2>
+
+            }
+
+        }
+    </fieldset>
+
+    <div class="box">
+        @*<a class="btn btn-default  btn-lg btn-block" onclick="window.location('@Url.Action("DisplayVacations","Vacation")')">Vacations </a>*@
+        @Html.ActionLink("Vacations", "DisplayVacations", "Vacation", null, new { @class = "btn btn-primary  btn-lg btn-block" })
+        @*<a class="btn btn-primary  btn-lg btn-block" onclick=PopupForm('@Url.Action("AddNewVacation","Vacation")')> Request a vacation</a>*@
+        <a class="btn btn-primary btn-lg btn-block" onclick=PopupForm('@Url.Action("UpdateEmployee","User",new { id=@Session["UserId"].ToString()})')> Edit Your Information</a>
+    </div>
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+
+        <script>
+            alertify.error("@ViewBag.Message");
+        </script>
+    }
+
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/alertify/alertify.js"></script>
+    <script src="~/Scripts/alertify/alertify.min.js"></script>
+
+    <script type="text/javascript">
+        function redirectOnClick() {
+            document.location = '@Url.Action(" DisplayUserVacations","Vacation")'
+        }
+
+
+        var popup;
+        function PopupForm(url) {
+
+            var formDiv = $('<div/>');
+            $.get(url)
+                .done(function (response) {
+                    formDiv.html(response);
+                    popup = formDiv.dialog({
+                        autoOpen: true,
+                        resizable: false,
+                        height: 500,
+                        width: 700,
+                        close: function () {
+                            popup.dialog('destroy').remove();
+                        }
+                    });
+                });
+        }
+
+        function SubmitForm(form) {
+            // to validate the form before submiting
+
+            $.validator.unobtrusive.parse(form);
+            if ($(form).valid()) {
+                var formData = new FormData(form);
+               // formData.append("file", input.files[0]);
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data.success) {
+                            popup.dialog('close');
+                            $.notify(data.message, {
+                                globalPosition: 'top center',
+                                className: "success"
+                            });
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: 'top center',
+                                className: "error"
+                            });
+                        }
+
+                    }
+
+                });
+            }
+            return false
+
+        }
+
+    </script>
+
+</body>
+</html>

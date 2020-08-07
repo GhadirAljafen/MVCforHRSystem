@@ -1,0 +1,125 @@
+﻿@model IEnumerable<HR.Website.Models.UserView>
+
+@{
+    ViewBag.Title = "GetUsers";
+}
+<!DOCTYPE html>
+<head>
+    <link href="//cdn.datatables.net/1.10.21/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link herf="//stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/alertify/alertify.core.css" rel="stylesheet" />
+    <link href="~/Content/alertify/alertify.default.css" rel="stylesheet" />
+</head>
+<html>
+<body>
+    <h2>Employees</h2>
+
+    <a class="btn btn-success" style="margin-bottom:10px" onclick="PopupForm('@Url.Action("AddNewEmployee","User")')"> + Add New</a>
+    <table class="table table-striped table-bordered" id="datatable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.JobTitle)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Mobile)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    Operations
+                </th>
+            </tr>
+        </thead>
+    </table>
+
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/dataTable.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/1.10.21/js/dataTables.bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/alertify/alertify.js"></script>
+    <script src="~/Scripts/alertify/alertify.min.js"></script>
+    <script src="~/Scripts/FormProccessing.js"></script>
+    <script type="text/javascript">
+        var dataTable;
+        $(document).ready(function () {
+            //$.noConflict();
+            dataTable =  $('#datatable').DataTable({
+
+                ajax: {
+                    "url": "/User/GetUsers",
+                    "type": "POST",
+                    "dataSrc": "aaData",
+                    "datatype": "json",
+                    
+                },
+
+                "serverSide": true,
+                "order": [[0, 'asc']],
+                "processing": true,
+                "lengthMenu": [[5, 10, 20, 50], [5, 10, 20, 50]],
+                "paging": true,
+
+                "columnDefs": [{
+                    "targets": 6,
+                    "data": "UserID",
+                    "render": function (data, type, row, meta) {
+                        var btn = "<a class = 'btn btn-danger btn-sm' onclick=DeleteUser("+row[0]+")>Delete</a> <a class = 'btn btn-default btn-sm' style='margin-left' onclick=PopupForm('@Url.Action("UpdateEmployee","User",new { id=-1})')> Edit</a>"
+                        btn = btn.replace("-1", row[0]);
+                        return btn;
+                    },
+                    "orderable": false,
+                    "width": "150px",
+                }],
+            });
+            $.fn.dataTable.ext.errMode = 'none';
+            $('#datatable')
+                .on('error.dt', function (e, settings, techNote, message) {
+                    console.log('An error has been reported by DataTables: ', message);
+                    alertify.error("Unable to connect to the remote server");
+                })
+                .DataTable();
+        });
+        // confirm dialog with alertify
+        function DeleteUser(id) {
+            alertify.confirm('Are you sure you want to delete this record?',
+                    function (e) {
+                        if (e) {
+                               $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("DeleteUser","User")/' + id,
+                    success: function (data) {
+                        if (data.success) {
+                            $('#datatable').DataTable().ajax.reload();
+                            alertify.success('Deleted Successfully');
+                        }
+                                   
+                        else { alertify.error(data.message); }
+                     }
+                });
+                        }
+                        else {
+                            alertify.error('Canceled');
+                        }
+                    });
+
+        }
+    </script>
+</body>
+</html>
+
+
+

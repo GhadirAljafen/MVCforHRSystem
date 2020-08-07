@@ -1,0 +1,88 @@
+﻿@model HR.Website.Models.UserInsertAndEdit
+  
+@{
+    Layout = null;
+    ViewBag.Title = "Update User Info";
+}
+
+<!DOCTYPE html>
+<head>
+    <link href="~/Content/alertify.css" rel="stylesheet" />
+</head>
+<html>
+
+<body>
+
+    @using (Html.BeginForm("UpdateUser", "User", FormMethod.Post, new { onsubmit = "return SubmitForm(this)" }))
+    {
+
+        <h1>Update User Information</h1>
+        <div class="form-horizontal">
+            @Html.HiddenFor(model => model.UserID)
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.JobTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.JobTitle, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.JobTitle, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Mobile, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="col-md-offset-2 col-md-10">
+                <input id="btnSubmit" type="submit" value="Update" class="btn btn-info" />
+            </div>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+
+            <script>
+            alertify.error("@ViewBag.Message");
+        @*window.onload = function () {
+                        alertify.error("@ViewBag.Message");
+          }*@
+            </script>
+    }
+</body>
+</html>
+

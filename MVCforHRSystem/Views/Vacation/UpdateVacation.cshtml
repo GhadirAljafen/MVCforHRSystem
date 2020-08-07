@@ -1,0 +1,126 @@
+﻿@model HR.Website.Models.VacationInsertAndEdit
+
+@{
+    Layout = null;
+    ViewBag.Title = "Update Vacation";
+}
+
+<!DOCTYPE html>
+<head>
+    <link href="~/Content/alertify.css" rel="stylesheet" />
+</head>
+<html>
+
+<body>
+
+    @using (Html.BeginForm("UpdateVacations", "Vacation", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return SubmitForm(this)" }))
+    {
+   
+        <h1>Update Vacation Status</h1>
+        if (@Convert.ToInt32(Session["Role"]) == 0)
+        {
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.VacationID)
+                @Html.HiddenFor(model => model.EmployeeID)
+                @Html.HiddenFor(model => model.Type)
+                @Html.HiddenFor(model => model.Description)
+                @Html.HiddenFor(model => model.Attatchment)
+                @Html.HiddenFor(model => model.StartDate)
+                @Html.HiddenFor(model => model.EndDate)
+            </div>
+
+            <div class="form-group">
+              
+                @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @{ 
+                        var selectList = Enum.GetValues(typeof(HR.Website.Models.Enums.Statuses))
+                                             .Cast<HR.Website.Models.Enums.Statuses>()
+                                             .Where(e => e != HR.Website.Models.Enums.Statuses.Pending &&
+                                             e != HR.Website.Models.Enums.Statuses.Draft
+                                             )
+                                             .Select(e => new SelectListItem
+                                             {
+                                                 Value = ((int)e).ToString(),
+                                                 Text = e.ToString()
+                                             });
+                    }
+                    @Html.DropDownListFor(m => m.Status, selectList, "Approve/Reject", new { @class = "form-control" })
+
+                    <br />
+                </div>
+                <div class="form-group">
+
+                    @Html.LabelFor(model => model.RejectionReason, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.RejectionReason, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.RejectionReason, "", new { @class = "text-danger" })
+                        @*@Html.ValidationMessage("CustomError")*@
+                    </div>
+                </div>
+                @Html.ValidationMessage("CustomError")
+                <div class="col-md-offset-2 col-md-10">
+                    <br />
+                    <input id="btnSubmit" type="submit" value="Update" class="btn btn-info" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-horizontal">
+                @Html.HiddenFor(model => model.EmployeeID)
+                @Html.HiddenFor(model => model.VacationID)
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("Type",
+                           new SelectList(Enum.GetValues(typeof(HR.Website.Models.Enums.Types))),
+                            "Select Vacation Type",
+                           new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Attatchment, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input class="form-control" type="file" name="file" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-offset-2 col-md-10">
+                    <input id="btnSubmit" type="submit" value="Update" class="btn btn-info" />
+                </div>
+            </div>
+        }
+    }
+
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+
+        <script>
+            alertify.error("@ViewBag.Message");
+        </script>
+    }
+</body>
+</html>
+
